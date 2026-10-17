@@ -30,7 +30,8 @@ export default function ScanPage() {
       if (mode === "date") body.date = date;
       if (mode === "range") { body.from = rangeFrom; body.to = rangeTo; }
 
-      const res = await fetch("/api/scan", {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+      const res = await fetch(`${backendUrl}/scan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
