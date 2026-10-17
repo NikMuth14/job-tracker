@@ -1,5 +1,14 @@
 # Gmail Job Application Tracker
 
+## 🚀 Live Deployments
+| Service | URL |
+|---------|-----|
+| **Frontend (PWA)** | https://job-tracker-nikhi.netlify.app |
+| **Backend API** | https://job-tracker-backend-9dcd.onrender.com |
+| **GitHub** | https://github.com/NikMuth14/job-tracker |
+
+> **iOS:** Open the frontend URL in Safari → Share → Add to Home Screen
+
 A Python agent that scans your Gmail for job application confirmation emails and logs a daily summary into a Google Sheet (new tab per day).
 
 ---
