@@ -74,7 +74,7 @@ export default function ScanPage() {
               key={m}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                 mode === m
-                  ? "bg-indigo-500/15 text-indigo-400 shadow-sm"
+                  ? "bg-emerald-500/15 text-emerald-400 shadow-sm"
                   : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.03]"
               }`}
               onClick={() => setMode(m)}
@@ -126,7 +126,7 @@ export default function ScanPage() {
 
       {/* Scan button */}
       <Button
-        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-0 h-12 text-base rounded-xl font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/30 hover:scale-[1.01]"
+        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border-0 h-12 text-base rounded-xl font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-emerald-500/30 hover:scale-[1.01]"
         onClick={handleScan}
         disabled={scanning || !canScan}
       >
@@ -143,7 +143,7 @@ export default function ScanPage() {
 
       {/* Results */}
       {results.length > 0 && (
-        <div className="glass-card rounded-2xl p-5 glow-indigo">
+        <div className="glass-card rounded-2xl p-5 glow-green">
           <h2 className="text-sm font-semibold text-white mb-3">Results</h2>
           <div className="space-y-2">
             {results.map((r) => (
@@ -162,7 +162,7 @@ export default function ScanPage() {
                 {r.error ? (
                   <span className="text-red-400 text-xs">{r.error}</span>
                 ) : (
-                  <Badge className="bg-indigo-500/10 text-indigo-400 border-0 text-xs">
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border-0 text-xs">
                     {r.count} app{r.count !== 1 ? "s" : ""}
                   </Badge>
                 )}

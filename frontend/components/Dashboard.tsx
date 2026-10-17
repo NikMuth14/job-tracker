@@ -26,79 +26,103 @@ export default function Dashboard() {
   const [recentApps, setRecentApps] = useState<Application[]>([]);
   const [statusBreakdown, setStatusBreakdown] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
-      const today = format(new Date(), "yyyy-MM-dd");
-      const monthStart = format(startOfMonth(new Date()), "yyyy-MM-dd");
-      const monthEnd = format(endOfMonth(new Date()), "yyyy-MM-dd");
-      const thirtyDaysAgo = format(subDays(new Date(), 29), "yyyy-MM-dd");
+      try {
+        const today = format(new Date(), "yyyy-MM-dd");
+        const monthStart = format(startOfMonth(new Date()), "yyyy-MM-dd");
+        const monthEnd = format(endOfMonth(new Date()), "yyyy-MM-dd");
+        const thirtyDaysAgo = format(subDays(new Date(), 29), "yyyy-MM-dd");
 
-      const [{ data: all }, { data: recent }] = await Promise.all([
-        supabase.from("applications").select("date, status"),
-        supabase
-          .from("applications")
-          .select("*")
-          .order("date", { ascending: false })
-          .order("time", { ascending: false })
-          .limit(10),
-      ]);
+        const [{ data: all, error: allErr }, { data: recent, error: recentErr }] = await Promise.all([
+          supabase.from("applications").select("date, status"),
+          supabase
+            .from("applications")
+            .select("*")
+            .order("date", { ascending: false })
+            .order("time", { ascending: false })
+            .limit(10),
+        ]);
 
-      if (!all) return;
+        if (allErr) { console.error("Supabase error:", allErr.message); setError(allErr.message); setLoading(false); return; }
+        if (recentErr) { console.error("Supabase error:", recentErr.message); }
 
-      setTotalCount(all.length);
-      setTodayCount(all.filter((a) => a.date === today).length);
-      setMonthCount(
-        all.filter((a) => a.date >= monthStart && a.date <= monthEnd).length
-      );
-      setRecentApps((recent as Application[]) ?? []);
+        const rows = all ?? [];
+        setTotalCount(rows.length);
+        setTodayCount(rows.filter((a) => a.date === today).length);
+        setMonthCount(
+          rows.filter((a) => a.date >= monthStart && a.date <= monthEnd).length
+        );
+        setRecentApps((recent as Application[]) ?? []);
 
-      const breakdown: Record<string, number> = {};
-      all.forEach((a) => {
-        breakdown[a.status] = (breakdown[a.status] ?? 0) + 1;
-      });
-      setStatusBreakdown(breakdown);
-
-      const countByDate: Record<string, number> = {};
-      all.forEach((a) => {
-        if (a.date >= thirtyDaysAgo) {
-          countByDate[a.date] = (countByDate[a.date] ?? 0) + 1;
-        }
-      });
-      const days: DayCount[] = [];
-      for (let i = 29; i >= 0; i--) {
-        const d = format(subDays(new Date(), i), "yyyy-MM-dd");
-        days.push({
-          date: d,
-          count: countByDate[d] ?? 0,
-          label: format(subDays(new Date(), i), "MMM d"),
+        const breakdown: Record<string, number> = {};
+        rows.forEach((a) => {
+          breakdown[a.status] = (breakdown[a.status] ?? 0) + 1;
         });
-      }
-      setLast30(days);
+        setStatusBreakdown(breakdown);
 
-      let s = 0;
-      for (let i = 0; i < 365; i++) {
-        const d = format(subDays(new Date(), i), "yyyy-MM-dd");
-        if ((countByDate[d] ?? 0) > 0 || (all.filter((a) => a.date === d).length > 0)) {
-          s++;
-        } else {
-          break;
+        const countByDate: Record<string, number> = {};
+        rows.forEach((a) => {
+          if (a.date >= thirtyDaysAgo) {
+            countByDate[a.date] = (countByDate[a.date] ?? 0) + 1;
+          }
+        });
+        const days: DayCount[] = [];
+        for (let i = 29; i >= 0; i--) {
+          const d = format(subDays(new Date(), i), "yyyy-MM-dd");
+          days.push({
+            date: d,
+            count: countByDate[d] ?? 0,
+            label: format(subDays(new Date(), i), "MMM d"),
+          });
         }
-      }
-      setStreak(s);
+        setLast30(days);
 
-      setLoading(false);
+        let s = 0;
+        for (let i = 0; i < 365; i++) {
+          const d = format(subDays(new Date(), i), "yyyy-MM-dd");
+          if ((countByDate[d] ?? 0) > 0 || (rows.filter((a) => a.date === d).length > 0)) {
+            s++;
+          } else {
+            break;
+          }
+        }
+        setStreak(s);
+      } catch (e) {
+        console.error("Dashboard load error:", e);
+        setError(e instanceof Error ? e.message : "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
     }
     load();
   }, []);
 
   const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
-    applied:   { bg: "bg-blue-500/10",   text: "text-blue-400",   dot: "bg-blue-400" },
-    interview: { bg: "bg-amber-500/10",  text: "text-amber-400",  dot: "bg-amber-400" },
-    offer:     { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+    applied:   { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+    interview: { bg: "bg-teal-500/10",   text: "text-teal-400",   dot: "bg-teal-400" },
+    offer:     { bg: "bg-green-500/10",  text: "text-green-400",  dot: "bg-green-400" },
     rejected:  { bg: "bg-red-500/10",    text: "text-red-400",    dot: "bg-red-400" },
     unknown:   { bg: "bg-zinc-500/10",   text: "text-zinc-400",   dot: "bg-zinc-400" },
   };
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-zinc-500 text-sm mt-1">Your application overview</p>
+        </div>
+        <div className="glass-card rounded-2xl p-8 text-center">
+          <p className="text-red-400 font-medium mb-2">Failed to load data</p>
+          <p className="text-zinc-500 text-sm mb-4">{error}</p>
+          <p className="text-zinc-600 text-xs">Check that the Supabase <code className="text-emerald-400">applications</code> table exists. You may need to run the SQL schema in the Supabase SQL editor.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -123,10 +147,10 @@ export default function Dashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <StatCard icon={<Briefcase size={18} />} label="Today" value={todayCount} gradient="from-indigo-500/20 to-indigo-600/5" glow="glow-indigo" iconColor="text-indigo-400" />
-        <StatCard icon={<Calendar size={18} />} label="This Month" value={monthCount} gradient="from-purple-500/20 to-purple-600/5" glow="glow-purple" iconColor="text-purple-400" />
-        <StatCard icon={<TrendingUp size={18} />} label="Total" value={totalCount} gradient="from-blue-500/20 to-blue-600/5" glow="glow-blue" iconColor="text-blue-400" />
-        <StatCard icon={<Flame size={18} />} label="Day Streak" value={streak} gradient="from-orange-500/20 to-orange-600/5" glow="glow-orange" iconColor="text-orange-400" />
+        <StatCard icon={<Briefcase size={18} />} label="Today" value={todayCount} gradient="from-emerald-500/20 to-emerald-600/5" glow="glow-green" iconColor="text-emerald-400" />
+        <StatCard icon={<Calendar size={18} />} label="This Month" value={monthCount} gradient="from-teal-500/20 to-teal-600/5" glow="glow-teal" iconColor="text-teal-400" />
+        <StatCard icon={<TrendingUp size={18} />} label="Total" value={totalCount} gradient="from-green-500/20 to-green-600/5" glow="glow-cyan" iconColor="text-green-400" />
+        <StatCard icon={<Flame size={18} />} label="Day Streak" value={streak} gradient="from-lime-500/20 to-lime-600/5" glow="glow-mint" iconColor="text-lime-400" />
       </div>
 
       {/* Chart */}
@@ -139,12 +163,12 @@ export default function Dashboard() {
           <BarChart data={last30} margin={{ top: 0, right: 0, left: -24, bottom: 0 }}>
             <defs>
               <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#818cf8" stopOpacity={0.9} />
-                <stop offset="100%" stopColor="#6366f1" stopOpacity={0.4} />
+                <stop offset="0%" stopColor="#86efac" stopOpacity={0.9} />
+                <stop offset="100%" stopColor="#6ee7b7" stopOpacity={0.4} />
               </linearGradient>
               <linearGradient id="barGradToday" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#a78bfa" stopOpacity={1} />
-                <stop offset="100%" stopColor="#818cf8" stopOpacity={0.6} />
+                <stop offset="0%" stopColor="#a7f3d0" stopOpacity={1} />
+                <stop offset="100%" stopColor="#86efac" stopOpacity={0.6} />
               </linearGradient>
             </defs>
             <XAxis
@@ -164,8 +188,8 @@ export default function Dashboard() {
                 boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
               }}
               labelStyle={{ color: "#fafafa", fontWeight: 600, marginBottom: 2 }}
-              itemStyle={{ color: "#a5b4fc" }}
-              cursor={{ fill: "rgba(129, 140, 248, 0.06)" }}
+              itemStyle={{ color: "#86efac" }}
+              cursor={{ fill: "rgba(134, 239, 172, 0.06)" }}
             />
             <Bar dataKey="count" radius={[6, 6, 2, 2]}>
               {last30.map((entry, i) => (
@@ -207,7 +231,7 @@ export default function Dashboard() {
         <div className="glass-card rounded-2xl p-5 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-white">Recent Applications</h2>
-            <a href="/applications" className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+            <a href="/applications" className="text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors">
               View all <ArrowUpRight size={12} />
             </a>
           </div>

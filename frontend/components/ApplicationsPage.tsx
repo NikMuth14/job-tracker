@@ -97,9 +97,9 @@ export default function ApplicationsPage() {
   }
 
   const statusConfig: Record<string, { bg: string; text: string; dot: string }> = {
-    applied:   { bg: "bg-blue-500/10",   text: "text-blue-400",   dot: "bg-blue-400" },
-    interview: { bg: "bg-amber-500/10",  text: "text-amber-400",  dot: "bg-amber-400" },
-    offer:     { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+    applied:   { bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
+    interview: { bg: "bg-teal-500/10",   text: "text-teal-400",   dot: "bg-teal-400" },
+    offer:     { bg: "bg-green-500/10",  text: "text-green-400",  dot: "bg-green-400" },
     rejected:  { bg: "bg-red-500/10",    text: "text-red-400",    dot: "bg-red-400" },
     unknown:   { bg: "bg-zinc-500/10",   text: "text-zinc-400",   dot: "bg-zinc-400" },
   };
@@ -122,7 +122,7 @@ export default function ApplicationsPage() {
               placeholder="Search company, role..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 focus:border-indigo-500/50 focus:ring-indigo-500/20 rounded-xl"
+              className="pl-9 bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 focus:border-emerald-500/50 focus:ring-emerald-500/20 rounded-xl"
             />
           </div>
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? "all")}>
@@ -178,7 +178,7 @@ export default function ApplicationsPage() {
                       </Badge>
                     </div>
                     {app.role && (
-                      <p className="text-indigo-300/70 text-xs truncate mt-0.5">{app.role}</p>
+                      <p className="text-emerald-300/70 text-xs truncate mt-0.5">{app.role}</p>
                     )}
                     <p className="text-zinc-600 text-xs mt-0.5">
                       {app.date} {app.time && `· ${app.time}`}
@@ -224,7 +224,7 @@ export default function ApplicationsPage() {
                 <Input
                   value={editing.company}
                   onChange={(e) => setEditing({ ...editing, company: e.target.value })}
-                  className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl focus:border-indigo-500/50"
+                  className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl focus:border-emerald-500/50"
                 />
               </div>
               <div>
@@ -232,7 +232,7 @@ export default function ApplicationsPage() {
                 <Input
                   value={editing.role}
                   onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                  className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl focus:border-indigo-500/50"
+                  className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl focus:border-emerald-500/50"
                 />
               </div>
               <div>
@@ -272,7 +272,7 @@ export default function ApplicationsPage() {
               </div>
               <div className="flex gap-3 pt-2">
                 <Button
-                  className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-0 rounded-xl h-11 font-semibold shadow-lg shadow-indigo-500/20"
+                  className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border-0 rounded-xl h-11 font-semibold shadow-lg shadow-emerald-500/20"
                   onClick={handleSave}
                   disabled={saving}
                 >

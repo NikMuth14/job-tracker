@@ -72,7 +72,7 @@ export default function AddPage() {
               value={form.company}
               onChange={(e) => update("company", e.target.value)}
               placeholder="e.g. Google, Stripe, SpaceX"
-              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-indigo-500/50 focus:ring-indigo-500/20"
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-emerald-500/50 focus:ring-emerald-500/20"
             />
           </div>
 
@@ -82,7 +82,7 @@ export default function AddPage() {
               value={form.role}
               onChange={(e) => update("role", e.target.value)}
               placeholder="e.g. Software Engineer"
-              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-indigo-500/50"
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-emerald-500/50"
             />
           </div>
 
@@ -134,7 +134,7 @@ export default function AddPage() {
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-0 h-12 rounded-xl font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/30 hover:scale-[1.01]"
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 border-0 h-12 rounded-xl font-semibold shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:shadow-emerald-500/30 hover:scale-[1.01]"
             disabled={saving}
           >
             <PlusCircle size={18} className="mr-2" />
