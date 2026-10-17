@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -60,76 +59,79 @@ export default function ScanPage() {
     (mode === "range" && rangeFrom && rangeTo);
 
   return (
-    <div className="space-y-6 pb-24 md:pb-6 max-w-lg">
-      <h1 className="text-2xl font-bold text-white">Scan Gmail</h1>
-
-      {/* Mode selector */}
-      <div className="flex gap-2">
-        {(["today", "date", "range"] as const).map((m) => (
-          <Button
-            key={m}
-            variant={mode === m ? "default" : "outline"}
-            size="sm"
-            className={
-              mode === m
-                ? "bg-indigo-600 hover:bg-indigo-700 border-0"
-                : "border-gray-700 text-gray-300 hover:text-white"
-            }
-            onClick={() => setMode(m)}
-          >
-            {m === "today" && <ScanLine size={14} className="mr-1" />}
-            {m === "date" && <Calendar size={14} className="mr-1" />}
-            {m === "range" && <CalendarRange size={14} className="mr-1" />}
-            {m === "today" ? "Today" : m === "date" ? "Specific Date" : "Date Range"}
-          </Button>
-        ))}
+    <div className="space-y-6 max-w-lg">
+      <div>
+        <h1 className="text-2xl font-bold text-white">Scan Gmail</h1>
+        <p className="text-zinc-500 text-sm mt-1">Import applications from your inbox</p>
       </div>
 
-      {/* Inputs */}
-      {mode === "date" && (
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Select Date</label>
-          <Input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="bg-gray-900 border-gray-700 text-white"
-          />
+      {/* Mode selector */}
+      <div className="glass-card rounded-2xl p-4">
+        <div className="flex gap-2">
+          {(["today", "date", "range"] as const).map((m) => (
+            <button
+              key={m}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                mode === m
+                  ? "bg-indigo-500/15 text-indigo-400 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.03]"
+              }`}
+              onClick={() => setMode(m)}
+            >
+              {m === "today" && <ScanLine size={14} />}
+              {m === "date" && <Calendar size={14} />}
+              {m === "range" && <CalendarRange size={14} />}
+              {m === "today" ? "Today" : m === "date" ? "Date" : "Range"}
+            </button>
+          ))}
         </div>
-      )}
 
-      {mode === "range" && (
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <label className="text-sm text-gray-400 mb-1 block">From</label>
+        {/* Inputs */}
+        {mode === "date" && (
+          <div className="mt-4">
+            <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Select Date</label>
             <Input
               type="date"
-              value={rangeFrom}
-              onChange={(e) => setRangeFrom(e.target.value)}
-              className="bg-gray-900 border-gray-700 text-white"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl"
             />
           </div>
-          <div className="flex-1">
-            <label className="text-sm text-gray-400 mb-1 block">To</label>
-            <Input
-              type="date"
-              value={rangeTo}
-              onChange={(e) => setRangeTo(e.target.value)}
-              className="bg-gray-900 border-gray-700 text-white"
-            />
+        )}
+
+        {mode === "range" && (
+          <div className="flex gap-3 mt-4">
+            <div className="flex-1">
+              <label className="text-xs text-zinc-400 mb-1.5 block font-medium">From</label>
+              <Input
+                type="date"
+                value={rangeFrom}
+                onChange={(e) => setRangeFrom(e.target.value)}
+                className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="text-xs text-zinc-400 mb-1.5 block font-medium">To</label>
+              <Input
+                type="date"
+                value={rangeTo}
+                onChange={(e) => setRangeTo(e.target.value)}
+                className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl"
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Scan button */}
       <Button
-        className="w-full bg-indigo-600 hover:bg-indigo-700 h-12 text-base"
+        className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-0 h-12 text-base rounded-xl font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/30 hover:scale-[1.01]"
         onClick={handleScan}
         disabled={scanning || !canScan}
       >
         {scanning ? (
           <span className="flex items-center gap-2">
-            <span className="animate-spin">⟳</span> Scanning Gmail...
+            <ScanLine size={18} className="animate-spin" /> Scanning Gmail...
           </span>
         ) : (
           <span className="flex items-center gap-2">
@@ -140,49 +142,45 @@ export default function ScanPage() {
 
       {/* Results */}
       {results.length > 0 && (
-        <Card className="bg-gray-900 border-gray-800">
-          <CardHeader>
-            <CardTitle className="text-white text-base">Results</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <div className="glass-card rounded-2xl p-5 glow-indigo">
+          <h2 className="text-sm font-semibold text-white mb-3">Results</h2>
+          <div className="space-y-2">
             {results.map((r) => (
               <div
                 key={r.date}
-                className="flex items-center justify-between p-3 rounded-lg bg-gray-800"
+                className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
               >
                 <div className="flex items-center gap-3">
                   {r.error ? (
                     <XCircle size={16} className="text-red-400" />
                   ) : (
-                    <CheckCircle size={16} className="text-green-400" />
+                    <CheckCircle size={16} className="text-emerald-400" />
                   )}
-                  <span className="text-white text-sm">{r.date}</span>
+                  <span className="text-white text-sm font-medium">{r.date}</span>
                 </div>
                 {r.error ? (
                   <span className="text-red-400 text-xs">{r.error}</span>
                 ) : (
-                  <Badge className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
+                  <Badge className="bg-indigo-500/10 text-indigo-400 border-0 text-xs">
                     {r.count} app{r.count !== 1 ? "s" : ""}
                   </Badge>
                 )}
               </div>
             ))}
-            <p className="text-gray-500 text-xs pt-2">
-              All results have been saved to your database and Google Sheet.
+            <p className="text-zinc-600 text-xs pt-2">
+              Saved to database and Google Sheet.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      <Card className="bg-gray-900 border-gray-800">
-        <CardContent className="pt-4">
-          <p className="text-gray-400 text-sm">
-            <strong className="text-white">How it works:</strong> The scan reads your Gmail for job application
-            confirmation emails using keywords, extracts company and role info, saves everything to
-            the database, and updates your Google Sheet.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="glass-card rounded-2xl p-5">
+        <p className="text-zinc-400 text-sm leading-relaxed">
+          <strong className="text-zinc-200">How it works:</strong> The scan reads your Gmail for job application
+          confirmation emails, extracts company and role info, saves everything to
+          the database, and updates your Google Sheet.
+        </p>
+      </div>
     </div>
   );
 }

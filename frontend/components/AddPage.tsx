@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,92 +58,90 @@ export default function AddPage() {
   }
 
   return (
-    <div className="max-w-lg space-y-6 pb-24 md:pb-6">
-      <h1 className="text-2xl font-bold text-white">Add Application</h1>
+    <div className="max-w-lg space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white">Add Application</h1>
+        <p className="text-zinc-500 text-sm mt-1">Manually log a job application</p>
+      </div>
 
-      <Card className="bg-gray-900 border-gray-800">
-        <CardHeader>
-          <CardTitle className="text-white text-base">Manual Entry</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">Company *</label>
+      <div className="glass-card rounded-2xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Company *</label>
+            <Input
+              value={form.company}
+              onChange={(e) => update("company", e.target.value)}
+              placeholder="e.g. Google, Stripe, SpaceX"
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-indigo-500/50 focus:ring-indigo-500/20"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Role</label>
+            <Input
+              value={form.role}
+              onChange={(e) => update("role", e.target.value)}
+              placeholder="e.g. Software Engineer"
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl focus:border-indigo-500/50"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Date Applied</label>
               <Input
-                value={form.company}
-                onChange={(e) => update("company", e.target.value)}
-                placeholder="e.g. Google, Stripe, SpaceX"
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
+                type="date"
+                value={form.date}
+                onChange={(e) => update("date", e.target.value)}
+                className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl"
               />
             </div>
-
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">Role</label>
-              <Input
-                value={form.role}
-                onChange={(e) => update("role", e.target.value)}
-                placeholder="e.g. Software Engineer"
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-              />
+            <div className="flex-1">
+              <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Status</label>
+              <Select value={form.status} onValueChange={(v) => update("status", v ?? "applied")}>
+                <SelectTrigger className="bg-white/[0.04] border-white/[0.06] text-white rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-zinc-900 border-white/[0.08] rounded-xl">
+                  {STATUSES.map((s) => (
+                    <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
+          </div>
 
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label className="text-sm text-gray-400 mb-1 block">Date Applied</label>
-                <Input
-                  type="date"
-                  value={form.date}
-                  onChange={(e) => update("date", e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-sm text-gray-400 mb-1 block">Status</label>
-                <Select value={form.status} onValueChange={(v) => update("status", v ?? "applied")}>
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700">
-                    {STATUSES.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          <div>
+            <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Job Posting URL <span className="text-zinc-600">(optional)</span></label>
+            <Input
+              value={form.subject}
+              onChange={(e) => update("subject", e.target.value)}
+              placeholder="https://..."
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl"
+            />
+          </div>
 
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">Job Posting URL (optional)</label>
-              <Input
-                value={form.subject}
-                onChange={(e) => update("subject", e.target.value)}
-                placeholder="https://..."
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-              />
-            </div>
+          <div>
+            <label className="text-xs text-zinc-400 mb-1.5 block font-medium">Notes</label>
+            <Textarea
+              value={form.notes}
+              onChange={(e) => update("notes", e.target.value)}
+              placeholder="Recruiter name, interview date, salary info..."
+              className="bg-white/[0.04] border-white/[0.06] text-white placeholder:text-zinc-600 rounded-xl"
+              rows={3}
+            />
+          </div>
 
-            <div>
-              <label className="text-sm text-gray-400 mb-1 block">Notes</label>
-              <Textarea
-                value={form.notes}
-                onChange={(e) => update("notes", e.target.value)}
-                placeholder="Recruiter name, interview date, salary info..."
-                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500"
-                rows={3}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 h-12"
-              disabled={saving}
-            >
-              <PlusCircle size={18} className="mr-2" />
-              {saving ? "Saving..." : "Add Application"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-0 h-12 rounded-xl font-semibold shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:shadow-indigo-500/30 hover:scale-[1.01]"
+            disabled={saving}
+          >
+            <PlusCircle size={18} className="mr-2" />
+            {saving ? "Saving..." : "Add Application"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

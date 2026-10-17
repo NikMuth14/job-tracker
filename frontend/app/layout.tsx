@@ -28,13 +28,23 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
-      <body className="min-h-full bg-gray-950 text-white flex flex-col">
+    <html lang="en" className={`${geistSans.variable} dark h-full`}>
+      <body className="min-h-full flex flex-col bg-mesh">
         <NavBar />
-        <main className="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-8 max-w-7xl mx-auto w-full pb-24 md:pb-8">
           {children}
         </main>
-        <Toaster />
+        <Toaster
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "rgba(24, 24, 27, 0.9)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#fafafa",
+              backdropFilter: "blur(12px)",
+            },
+          }}
+        />
       </body>
     </html>
   );
